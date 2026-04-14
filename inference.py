@@ -52,15 +52,15 @@ def parse_args() -> argparse.Namespace:
         help='Inference batch size',
     )
     parser.add_argument(
-        '--num_workers', type=int, default=4,
+        '--num_workers', type=int, default=0,
         help='Number of data loading workers',
     )
     parser.add_argument(
-        '--score_threshold', type=float, default=0.3,
+        '--score_threshold', type=float, default=0.1,
         help='Minimum detection score threshold',
     )
     parser.add_argument(
-        '--image_size', type=int, default=800,
+        '--image_size', type=int, default=480,
         help='Resize shortest side to this value',
     )
     parser.add_argument(
@@ -75,7 +75,7 @@ def run_inference(
     model: torch.nn.Module,
     dataloader: DataLoader,
     device: torch.device,
-    score_threshold: float = 0.3,
+    score_threshold: float = 0.1,
 ) -> List[Dict]:
     """Run inference on the test set.
 
@@ -172,15 +172,27 @@ def main() -> None:
 
     # Load checkpoint
     print(f"Loading checkpoint: {args.checkpoint}")
-    checkpoint = torch.load(args.checkpoint, map_location=device, weights_only=False)
+    checkpoint = torch.load(
+        args.checkpoint, map_location=device, weights_only=False,
+    )
     saved_args = checkpoint.get('args', {})
 
     # Build model
     num_classes = saved_args.get('num_classes', 10)
+
+    # Detect num_queries from checkpoint state_dict
+    num_queries = 100
+    if 'model.query_position_embeddings.weight' in checkpoint[
+        'model_state_dict'
+    ]:
+        num_queries = checkpoint[
+            'model_state_dict'
+        ]['model.query_position_embeddings.weight'].shape[0]
+
     model = build_model(
         num_classes=num_classes,
         pretrained=False,
-        num_queries=saved_args.get('num_queries', 50),
+        num_queries=num_queries,
     )
     model.load_state_dict(checkpoint['model_state_dict'])
     model = model.to(device)

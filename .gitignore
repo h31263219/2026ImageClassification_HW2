@@ -19,3 +19,17 @@ output_test/
 # OS generated files
 .DS_Store
 Thumbs.db
+
+# Temporary / generated files
+check_args.py
+generate_report_figures.py
+read_pdf.py
+pdf_content.txt
+python_paths.txt
+torch_install.txt
+
+# PDF slides
+(114-2) HW2 Slides.pdf
+
+# HW1 reference files
+hw1_*.txt
