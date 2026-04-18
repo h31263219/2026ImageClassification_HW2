@@ -104,4 +104,5 @@ This generates `pred.json` and a submission zip file in the `./output` directory
 
 The training loss steadily decreases across all 50 epochs while the validation loss stabilizes around 1.0, indicating healthy convergence without significant overfitting.
 
-![Training Curves](output/training_curves.png)
+<img width="2670" height="718" alt="image" src="https://github.com/user-attachments/assets/e31f3e5a-d9ef-4844-9dbf-4feb84337252" />
+
